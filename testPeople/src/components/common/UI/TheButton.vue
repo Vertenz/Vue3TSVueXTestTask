@@ -1,6 +1,6 @@
 <script lang="ts">
 // not setup only for example
-import {defineComponent, computed, PropType} from 'vue'
+import { defineComponent, computed, PropType } from 'vue'
 
 export default defineComponent({
   name: 'TheButton',
@@ -114,7 +114,7 @@ export default defineComponent({
   <component :is="type" :to="to" :class="buttonClass" @click="handleClick">
     <slot v-if="!item"></slot>
 
-    <div>
+    <div v-else>
       {{ isFavorites ? 'удалить' : 'добавить' }}
     </div>
   </component>

@@ -72,7 +72,7 @@ onMounted(() => {
             {{ item.hair_color }}
           </td>
           <td>
-              <TheButton :item="item" />
+            <TheButton :item="item" />
           </td>
         </tr>
       </tbody>
