@@ -1,6 +1,6 @@
 <script lang="ts">
-// not setup only for example
-import {defineComponent, computed, PropType} from 'vue'
+// for example, used here not setup
+import { defineComponent, computed, PropType, ref, Ref, onMounted } from 'vue'
 
 export default defineComponent({
   name: 'TheButton',
@@ -45,12 +45,28 @@ export default defineComponent({
     function handleClick() {
       if (!props.disabled && !props.item) {
         emit('click')
-      } else if (props.item && props.item.id) {
+      } else if (props.item && props.item.url) {
         setFavorites()
       }
     }
 
     // next only for favorites
+    const isFavorites: Ref<Boolean> = ref(false)
+
+    const setIsFavorites = (): Boolean => {
+      const favorites = getFavorites()
+      if (favorites) {
+        return (isFavorites.value = Boolean(favorites.find((el) => el.url === props.item.url)))
+      }
+
+      return (isFavorites.value = false)
+    }
+
+    onMounted(() => {
+      if (props.item && props.item.url) {
+        setIsFavorites()
+      }
+    })
     const getFavorites = () => {
       const storageFavorites = localStorage.getItem('favorites')
       let favorites = null
@@ -62,26 +78,17 @@ export default defineComponent({
       return favorites
     }
 
-    const isFavorites = computed((): Boolean => {
-      const favorites = getFavorites()
-      if (favorites) {
-        return Boolean(favorites.find((el) => el.id === props.item.id))
-      }
-
-      return false
-    })
-
     const addToFavorites = (): void => {
       let favorites = getFavorites() || []
 
       favorites.push(props.item)
 
-      localStorage.setItem('items', JSON.stringify(favorites))
+      localStorage.setItem('favorites', JSON.stringify(favorites))
     }
 
     const removeFromFavorites = (): void => {
       let favorites = getFavorites() || []
-      const index = favorites.findIndex((el) => el.id === props.item.id)
+      const index = favorites.findIndex((el) => el.url === props.item.url)
 
       if (index !== -1) {
         favorites.splice(index, 1)
@@ -92,10 +99,14 @@ export default defineComponent({
     }
 
     const setFavorites = () => {
-      if (isFavorites.value) {
+      if (!isFavorites.value) {
         addToFavorites()
+        setIsFavorites()
+        emit('update')
       } else {
         removeFromFavorites()
+        setIsFavorites()
+        emit('update')
       }
     }
 
@@ -111,10 +122,10 @@ export default defineComponent({
 </script>
 
 <template>
-  <component :is="type" :to="to" :class="buttonClass" @click="handleClick">
+  <component :is="type" :to="to" :class="buttonClass" @click.stop="handleClick">
     <slot v-if="!item"></slot>
 
-    <div>
+    <div v-else>
       {{ isFavorites ? 'удалить' : 'добавить' }}
     </div>
   </component>

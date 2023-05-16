@@ -5,11 +5,11 @@ import { useStore } from 'vuex'
 
 const store = useStore()
 
-const peoples = store.state.peoples
+const people = store.state.people
 
 // Fetch data on component mount
 onMounted(() => {
-  if (!peoples) {
+  if (!people) {
     store.dispatch('fetchData')
   }
 })

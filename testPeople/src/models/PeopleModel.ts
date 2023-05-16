@@ -1,5 +1,5 @@
 interface PeopleModel {
-  id: number
+  url: string
   name: string
   height: string
   mass: number
