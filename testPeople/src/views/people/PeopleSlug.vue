@@ -2,14 +2,30 @@
 import { useRoute } from 'vue-router'
 import { onMounted, ref, Ref } from 'vue'
 import TheLoader from '@/components/common/UI/TheLoader.vue'
+import axios from 'axios'
+import PeopleTable from '@/components/common/PeopleTable.vue'
 
 const route = useRoute()
 
 const isLoading: Ref<Boolean> = ref(true)
 
-onMounted(() => {
+const person: Ref<Array<PeopleModel> | null> = ref(null)
+
+const fetchData = async () => {
+  try {
+    const res = await axios.get(`https://swapi.dev/api/people/${route.params.id}`)
+    person.value = [res?.data] || null
+  } catch (err) {
+    console.warn('PeopleSlug/fetchData get error: ', err)
+  }
+}
+
+onMounted(async () => {
+  await fetchData()
   setTimeout(() => {
-    isLoading.value = false
+    if (person.value && person.value.length) {
+      isLoading.value = false
+    }
   }, 500)
 })
 </script>
@@ -19,7 +35,7 @@ onMounted(() => {
     <transition name="fade">
       <TheLoader v-if="isLoading" />
 
-      <h1 v-else>{{ route.params.id }}</h1>
+      <PeopleTable v-else :people="person" is-slug-page />
     </transition>
   </section>
 </template>

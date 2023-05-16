@@ -4,6 +4,7 @@ import TheInput from '@/components/common/UI/TheInput.vue'
 import { Ref, ref } from 'vue'
 import axios from 'axios'
 import ScrollBox from '@/components/common/UI/ScrollBox.vue'
+import ResultBlock from '@/components/common/ResultBlock.vue'
 
 const props = defineProps<{
   people: Array<PeopleModel> | null
@@ -14,9 +15,9 @@ const searchResult: Ref<null | Array<PeopleModel>> = ref(null)
 const onUpdate = async (value) => {
   if (value) {
     try {
-      searchResult.value = await axios.get(`https://swapi.dev/api/people/?search=${value}`)
+      const res = await axios.get(`https://swapi.dev/api/people/?search=${value}`)
+      searchResult.value = res?.data?.results || null
     } catch (err) {
-      searchResult.value = ['1', '2', '3']
       console.warn('ThePeople/onUpdate get err: ', err)
     }
   } else {
@@ -32,10 +33,13 @@ const onUpdate = async (value) => {
     <TheInput @update="onUpdate($event)" />
 
     <transition name="slide-fade">
-      <ScrollBox v-if="searchResult && searchResult.length">
-        <div v-for="el in searchResult" :key="el">
-          {{ el }}
-        </div>
+      <ScrollBox v-if="searchResult && searchResult.length" class="scroll--box">
+        <ResultBlock
+          v-for="el in searchResult"
+          :key="el.url"
+          :item="el"
+          class="scroll--box-element"
+        />
       </ScrollBox>
     </transition>
   </div>
@@ -61,13 +65,25 @@ const onUpdate = async (value) => {
 // end transition
 
 .search--wrapper {
+  position: relative;
   display: flex;
   flex-direction: column;
-  width: 25vw;
+  width: max-content;
   min-width: 150px;
 
   & > * {
     margin-bottom: 0.4em;
   }
+}
+
+.scroll--box {
+  position: absolute;
+  top: 40px;
+  min-width: 250px;
+}
+
+.scroll--box-element {
+  display: block;
+  border-bottom: 1px solid grey;
 }
 </style>

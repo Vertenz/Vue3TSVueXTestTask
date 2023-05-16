@@ -13,9 +13,9 @@
   height: max-content;
   max-width: 100%;
   max-height: 20vh;
-  padding: 0.5em 1em;
   overflow-x: hidden;
   overflow-y: scroll;
+  background-color: #fff;
   border: 1px solid var(--vt-c-divider-dark-1);
   border-radius: 8px;
   -webkit-box-shadow: 0 -1px 21px 8px rgba(184, 184, 184, 1);
