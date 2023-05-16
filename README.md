@@ -1,4 +1,5 @@
 # Vue 3 Technical Task
+https://6463f47643ef0d000824f7f4--glowing-cannoli-54a528.netlify.app/
 
 This repository contains a technical task implemented using Vue 3, TypeScript, Vuex, Axios, and LocalStorage.
 
